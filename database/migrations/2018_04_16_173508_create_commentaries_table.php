@@ -17,7 +17,8 @@ class CreateCommentariesTable extends Migration
             $table->increments('id');
             $table->string('author');
             $table->text('content');
-            $table->timestamp('created_at ');
+            $table->integer('article_id')->unsigned();
+            $table->timestamp('created_at');
         });
     }
 
