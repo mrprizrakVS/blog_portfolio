@@ -7,6 +7,8 @@
         <div class="col-md-12">
             <a class="btn btn-primary btn-lg" href="{{route('article.edit', $article->id)}}" role="button">Update
                 article</a>
+            <a class="btn btn-primary btn-lg" href="{{route('article.delete', $article->id)}}" role="button">Delete
+                article</a>
         </div>
         <div class="col-md-12">
             <h2>{{$article->name}}</h2>
@@ -36,13 +38,21 @@
 
             <script>
                 $(function () {
+
+                    $('#author').change(function () {
+                        var author = $('#author').val();
+                        var author_split = author.split(' ', 2);
+                        if (author_split.length != 2) {
+                            alert('Author > 1 word');
+                        }
+                    });
+
                     $('#add_comment').click(function () {
                         var author = $("#author").val();
                         var content = $("#content").val();
                         var article_id = "{{$article->id}}";
                         var token = "{{csrf_token()}}";
                         var date = new Date();
-
                         $.ajax({
                             type: "POST",
                             url: "{{route('commentary.store')}}",
@@ -60,7 +70,6 @@
                                 $("#content").val('');
                             }
                         });
-
                     });
                 });
             </script>
