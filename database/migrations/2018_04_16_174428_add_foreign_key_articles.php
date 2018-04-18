@@ -18,6 +18,10 @@ class AddForeignKeyArticles extends Migration
               ->references('id')
               ->on('categories')
               ->onDelete('cascade');
+          $table->foreign('user_id')
+              ->references('id')
+              ->on('users')
+              ->onDelete('cascade');
        });
     }
 
@@ -30,6 +34,7 @@ class AddForeignKeyArticles extends Migration
     {
         Schema::table('articles', function (Blueprint $table){
             $table->dropForeign('articles_category_id_foreign');
+            $table->dropForeign('articles_user_id_foreign');
         });
     }
 }

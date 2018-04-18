@@ -35,7 +35,13 @@ class CommentarieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $commentary_id = Commentarie::create([
+            'author' => $request->author,
+            'content' => $request->content,
+            'article_id' => $request->article_id
+        ]);
+        return redirect(route('article.show', $request->article_id));
+
     }
 
     /**

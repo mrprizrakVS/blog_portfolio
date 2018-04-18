@@ -14,7 +14,8 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Categorie::all();
+        return view('categories.index', compact('categories'));
     }
 
     /**
@@ -24,7 +25,8 @@ class CategorieController extends Controller
      */
     public function create()
     {
-        //
+//        return '123';
+        return view('categories.create');
     }
 
     /**
@@ -35,29 +37,31 @@ class CategorieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category_id = Categorie::create($request->all());
+        return redirect(route('categories.show', $category_id));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function show(Categorie $categorie)
+    public function show($id)
     {
-        //
+        $category = Categorie::findOrFail($id);
+        $articles = Categorie::findOrFail($id);
+        return view('categories.show', compact('category', 'articles'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function edit(Categorie $categorie)
+    public function edit($id)
     {
-        //
+        $categorie = Categorie::findOrFail($id);
+        return view('categories.update', compact('categorie'));
     }
 
     /**
@@ -67,9 +71,10 @@ class CategorieController extends Controller
      * @param  \App\Models\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Categorie $categorie)
+    public function update(Request $request, $id)
     {
-        //
+        Categorie::findOrFail($id)->update($request->all());
+        return redirect(route('categories'));
     }
 
     /**
