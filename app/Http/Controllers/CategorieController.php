@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categorie;
+use App\Repository\CategorieRepository;
 use Illuminate\Http\Request;
 
 class CategorieController extends Controller
 {
+    protected $model;
+
+    public function __construct(CategorieRepository $categorieRepository)
+    {
+        $this->model = $categorieRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +22,7 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        $categories = Categorie::all();
+        $categories = $this->model->getAll();
         return view('categories.index', compact('categories'));
     }
 
@@ -25,7 +33,6 @@ class CategorieController extends Controller
      */
     public function create()
     {
-//        return '123';
         return view('categories.create');
     }
 
@@ -37,8 +44,8 @@ class CategorieController extends Controller
      */
     public function store(Request $request)
     {
-        $category_id = Categorie::create($request->all());
-        return redirect(route('categories.show', $category_id));
+        $category_id = $this->model->create($request->all());
+        return redirect(route('categories.show', $category_id->id));
     }
 
     /**
@@ -48,8 +55,8 @@ class CategorieController extends Controller
      */
     public function show($id)
     {
-        $category = Categorie::findOrFail($id);
-        $articles = Categorie::findOrFail($id);
+        $category = $this->model->getById($id);
+        $articles = $category->articles;
         return view('categories.show', compact('category', 'articles'));
     }
 
@@ -60,7 +67,7 @@ class CategorieController extends Controller
      */
     public function edit($id)
     {
-        $categorie = Categorie::findOrFail($id);
+        $categorie = $this->model->getById($id);
         return view('categories.update', compact('categorie'));
     }
 
@@ -73,7 +80,7 @@ class CategorieController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Categorie::findOrFail($id)->update($request->all());
+        $this->model->update($request->all());
         return redirect(route('categories'));
     }
 
@@ -83,8 +90,10 @@ class CategorieController extends Controller
      * @param  \App\Models\Categorie  $categorie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categorie $categorie)
+    public function destroy($id)
     {
-        //
+        $this->model->delete($id);
+        return redirect(route('categories'));
+
     }
 }

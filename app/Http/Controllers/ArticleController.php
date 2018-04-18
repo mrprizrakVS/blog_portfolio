@@ -5,10 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Categorie;
 use App\Models\Commentarie;
+use App\Repository\ArticleRepository;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
+    protected $model;
+
+    public function __construct(ArticleRepository $articleRepository)
+    {
+        $this->model = $articleRepository;
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +25,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::all();
+        $articles = $this->model->getAll();
         return view('article.index', compact('articles'));
     }
 
@@ -39,12 +48,12 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        $article_id = Article::create([
+        $article_id = $this->model->create([
             'name' => $request->name,
             'content' => $request->content,
             'user_id' => \Auth::user()->id
         ]);
-        $article = Article::find($article_id->id);
+        $article = $this->model->getById($article_id->id);
         $article->categories()->sync($request->categories);
         return redirect(route('article.show', $article_id));
     }
@@ -56,7 +65,9 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        $article = Article::findOrFail($id);
+//        dd(strpos($_SERVER["HTTP_USER_AGENT"], "Chrome"));
+
+        $article = $this->model->getById($id);
         $commentaries = $article->commentaries;
         return view('article.show', compact('article', 'commentaries'));
     }
@@ -69,7 +80,7 @@ class ArticleController extends Controller
      */
     public function edit($id)
     {
-        $article = Article::findOrFail($id);
+        $article = $this->model->getById($id);
         $mainCategory = $article->categories;
         $array = [];
         foreach ($mainCategory as $item){
@@ -88,8 +99,8 @@ class ArticleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Article::findOrFail($id)->update($request->all());
-        $article = Article::find($id);
+        $this->model->update($request->all(), $id);
+        $article = $this->model->getById($id);
         $article->categories()->sync($request->categories);
         return redirect(route('article'));
     }
@@ -100,8 +111,9 @@ class ArticleController extends Controller
      * @param  \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Article $article)
+    public function destroy($id)
     {
-        //
+        $this->model->delete($id);
+        return redirect(route('article'));
     }
 }

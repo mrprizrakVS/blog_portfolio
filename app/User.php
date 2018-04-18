@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\UserProfile;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -48,7 +49,13 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function article(){
+    public function article()
+    {
         return $this->hasMany(\App\Models\Article::class, 'user_id');
+    }
+
+    public function user_profile()
+    {
+        return $this->hasOne(UserProfile::class, 'user_id');
     }
 }

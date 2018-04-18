@@ -35,8 +35,10 @@ class CommentarieController extends Controller
      */
     public function store(Request $request)
     {
-        $commentary_id = Commentarie::create([
-            'author' => $request->author,
+        $author_str = explode(" ", $request->author);
+        $author = ucfirst($author_str[0]). ' '. ucfirst($author_str[1]);
+        Commentarie::create([
+            'author' => $author,
             'content' => $request->content,
             'article_id' => $request->article_id
         ]);
@@ -84,8 +86,9 @@ class CommentarieController extends Controller
      * @param  \App\Models\Commentarie  $commentarie
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Commentarie $commentarie)
+    public function destroy($id)
     {
-        //
+        Commentarie::findOrFail($id)->delete();
+        return redirect(route('article'));
     }
 }
